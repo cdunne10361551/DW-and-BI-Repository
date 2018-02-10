@@ -321,20 +321,20 @@ INSERT INTO [NW_Warehouse].[dbo].[Customers](CUSTOMER_ID,
 -- PRODUCTS DIMENSION  --
 
 BEGIN TRY
-	DROP TABLE [NW_Warehouse].[dbo].[PRODUCTS]
+	DROP TABLE [NW_Warehouse].[dbo].[Products]
 END TRY
 
 BEGIN CATCH
 	/*No Action*/
 END CATCH
 
-CREATE TABLE [NW_Warehouse].[dbo].[PRODUCTS](PRODUCT_ID INT PRIMARY KEY,
+CREATE TABLE [NW_Warehouse].[dbo].[Products](PRODUCT_ID INT PRIMARY KEY,
 												PRODUCT_NAME NVARCHAR(40) NOT NULL,
 												UNIT_PRICE MONEY NULL,
 												CATEGORY_NAME NVARCHAR(15) NOT NULL,
 												DISCONTINUED NVARCHAR(3) NOT NULL);
 
-INSERT INTO [NW_Warehouse].[dbo].[PRODUCTS](PRODUCT_ID,
+INSERT INTO [NW_Warehouse].[dbo].[Products](PRODUCT_ID,
 											PRODUCT_NAME,
 											UNIT_PRICE,
 											CATEGORY_NAME,
@@ -349,7 +349,45 @@ INSERT INTO [NW_Warehouse].[dbo].[PRODUCTS](PRODUCT_ID,
 											END)
 									FROM [NORTHWND].[dbo].[Products] p, [NORTHWND].[dbo].[Categories] c
 									WHERE P.CategoryID = c.CategoryID;
+									
 
+-----------------------------------------------------------------------------------
+-- EMPLOYEE TERRITORY DIMENSION --
+-----------------------------------------------------------------------------------
+
+--EMPLOYEE TERRITORY DIMENSION --
+
+BEGIN TRY
+	DROP TABLE [NW_Warehouse].[dbo].[EmployeeTerritories]
+END TRY
+
+BEGIN CATCH
+	/*No Action*/
+END CATCH
+
+CREATE TABLE [NW_Warehouse].[dbo].[EmployeeTerritories](EMPLOYEE_ID INT NOT NULL,
+														TERRITORY_DESCRIPTION NCHAR(50) NOT NULL,
+														NAME NVARCHAR(40) NOT NULL,
+														TITLE NVARCHAR(30) NULL,
+														REGION_DESCRIPTION NCHAR(50) NOT NULL,
+														REPORTS_TO INT NULL);
+
+INSERT INTO [NW_Warehouse].[dbo].[EmployeeTerritories](EMPLOYEE_ID,
+														TERRITORY_DESCRIPTION,
+														NAME,
+														TITLE,
+														REGION_DESCRIPTION,
+														REPORTS_TO)
+												SELECT et.EmployeeID,
+														t.TerritoryDescription,
+														CONCAT(e.FirstName,' ',e.Lastname),
+														e.Title,
+														r.RegionDescription,
+														e.ReportsTo
+												FROM [NORTHWND].[dbo].[Employees] e
+												JOIN [NORTHWND].[dbo].[EmployeeTerritories] et ON e.EmployeeID = et.EmployeeID
+												JOIN [NORTHWND].[dbo].[Territories] t ON t.TerritoryID = et.TerritoryID
+												JOIN [NORTHWND].[dbo].[Region] r ON  t.RegionID = r.RegionID;
 
 
 
