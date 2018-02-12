@@ -370,7 +370,7 @@ CREATE TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID INT NOT N
 														NAME NVARCHAR(40) NOT NULL,
 														TITLE NVARCHAR(30) NULL,
 														REGION_DESCRIPTION NCHAR(50) NOT NULL,
-														REPORTS_TO INT NULL);
+														REPORTS_TO NVARCHAR(40) NULL);
 
 INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID,
 														TERRITORY_DESCRIPTION,
@@ -383,8 +383,9 @@ INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID,
 														CONCAT(e.FirstName,' ',e.Lastname),
 														e.Title,
 														r.RegionDescription,
-														e.ReportsTo
+														(SELECT CONCAT(FirstName,' ',Lastname) FROM [10361551].[dbo].[Employees] WHERE EmployeeID = e.ReportsTo)
 												FROM [10361551].[dbo].[Employees] e
 												JOIN [10361551].[dbo].[EmployeeTerritories] et ON e.EmployeeID = et.EmployeeID
 												JOIN [10361551].[dbo].[Territories] t ON t.TerritoryID = et.TerritoryID
 												JOIN [10361551].[dbo].[Region] r ON  t.RegionID = r.RegionID;
+												
