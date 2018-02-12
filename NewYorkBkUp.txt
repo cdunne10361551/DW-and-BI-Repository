@@ -1,0 +1,5 @@
+INSERT INTO [10361551].[DBO].[Territories](TerritoryID,TerritoryDescription,RegionID) values(10019,'New York',1);
+INSERT INTO [10361551].[DBO].[Territories](TerritoryID,TerritoryDescription,RegionID) values(10038,'New York',1);
+
+INSERT INTO [10361551].[DBO].[EmployeeTerritories](EmployeeID,TerritoryID) VALUES(2,10019);
+INSERT INTO [10361551].[DBO].[EmployeeTerritories](EmployeeID,TerritoryID) VALUES(2,10038);

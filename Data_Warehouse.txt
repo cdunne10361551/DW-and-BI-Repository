@@ -355,8 +355,21 @@ INSERT INTO [10361551_DW].[dbo].[Products_dim](PRODUCT_ID,
 -- EMPLOYEE TERRITORY DIMENSION --
 -----------------------------------------------------------------------------------
 
---EMPLOYEE TERRITORY DIMENSION --
+-- ANALYSIS HAS SHOWN DUPLICATE TERRITORY FOR NEW YORK EXISTS --
+BEGIN TRY
+	DECLARE @TerritoryCount INT;
+	SET @TerritoryCount = (SELECT COUNT(TerritoryDescription) FROM [10361551].[DBO].[Territories] WHERE TerritoryDescription = 'New York');
 
+	IF @TerritoryCount > 1
+	DELETE FROM [10361551].[DBO].[EmployeeTerritories] WHERE TerritoryID IN(SELECT MAX(TerritoryID) from [10361551].[DBO].[Territories] WHERE TerritoryDescription = 'New York')
+	DELETE FROM [10361551].[DBO].[Territories] WHERE TerritoryID IN(SELECT MAX(TerritoryID) from [10361551].[DBO].[Territories] WHERE TerritoryDescription = 'New York')
+END TRY
+
+BEGIN CATCH
+	/*No Action*/
+END CATCH
+
+-- EMPLOYEE TERRITORY DIMENSION --
 BEGIN TRY
 	DROP TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim]
 END TRY
@@ -364,6 +377,8 @@ END TRY
 BEGIN CATCH
 	/*No Action*/
 END CATCH
+
+
 
 CREATE TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim](TERRITORY_ID INT NOT NULL,
 														TERRITORY_DESCRIPTION NCHAR(50) NOT NULL,
@@ -388,4 +403,3 @@ INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](TERRITORY_ID,
 												JOIN [10361551].[dbo].[EmployeeTerritories] et ON t.TerritoryID = et.TerritoryID
 												JOIN [10361551].[dbo].[Employees] e ON e.EmployeeID = et.EmployeeID
 												JOIN [10361551].[dbo].[Region] r ON  t.RegionID = r.RegionID;
-												
