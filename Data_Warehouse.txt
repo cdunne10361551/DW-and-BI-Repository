@@ -2,7 +2,7 @@
 -- CREATE DATE DIMENSION --
 -----------------------------------------------------------------------------------
 BEGIN TRY
-	DROP TABLE [dbo].[DimDate]
+	DROP TABLE [10361551_DW].[dbo].[DimDate]
 END TRY
 
 BEGIN CATCH
@@ -11,7 +11,7 @@ END CATCH
 
 /**********************************************************************************/
 
-CREATE TABLE [NW_WAREHOUSE].[dbo].[DimDate]
+CREATE TABLE [10361551_DW].[dbo].[DimDate]
 	(	[DATE_KEY] INT primary key, 
 		[Date] DATETIME,
 		[FullDateUK] CHAR(10), -- Date in dd-MM-yyyy format
@@ -145,7 +145,7 @@ BEGIN
 
 /* Populate Your Dimension Table with values*/
 	
-	INSERT INTO [NW_WAREHOUSE].[dbo].[DimDate]
+	INSERT INTO [10361551_DW].[dbo].[DimDate]
 	SELECT
 		
 		CONVERT (char(8),@CurrentDate,112) as DATE_KEY,
@@ -241,14 +241,14 @@ END
 -- FACT TABLE CREATION --
 -----------------------------------------------------------------------------------
 BEGIN TRY
-	DROP TABLE [NW_WAREHOUSE].[dbo].[FactSales]
+	DROP TABLE [10361551_DW].[dbo].[FactSales]
 END TRY
 
 BEGIN CATCH
 	/*No Action*/
 END CATCH
 
-CREATE TABLE [NW_WAREHOUSE].[dbo].[FactSales](FACT_ID INT IDENTITY (1,1) PRIMARY KEY,
+CREATE TABLE [10361551_DW].[dbo].[FactSales](FACT_ID INT IDENTITY (1,1) PRIMARY KEY,
 									ORDER_ID INT NOT NULL,
 									PRODUCT_ID INT NOT NULL,
 									EMPLOYEE_ID INT NOT NULL,
@@ -257,7 +257,7 @@ CREATE TABLE [NW_WAREHOUSE].[dbo].[FactSales](FACT_ID INT IDENTITY (1,1) PRIMARY
 									GROSS_SALE_VALUE SMALLMONEY NOT NULL,
 									DISCOUNT_SALE_VALUE SMALLMONEY NOT NULL);
 
-INSERT INTO [NW_WAREHOUSE].[dbo].[FactSales](ORDER_ID, 
+INSERT INTO [10361551_DW].[dbo].[FactSales](ORDER_ID, 
 									PRODUCT_ID,
 									EMPLOYEE_ID,
 									CUSTOMER_ID,
@@ -271,9 +271,9 @@ INSERT INTO [NW_WAREHOUSE].[dbo].[FactSales](ORDER_ID,
 								d_date.DATE_KEY,
 								CONVERT(money, (d_ord.UnitPrice * d_ord.Quantity)) AS GROSS_SALE_VALUE,
 								CONVERT(money, (d_ord.UnitPrice * d_ord.Quantity * (1-d_ord.Discount)/100))*100 AS DISCOUNT_SALE_VALUE
-						FROM [NORTHWND].[dbo].[Order Details] d_ord,
-								[NORTHWND].[dbo].[Orders] o,
-								[NW_Warehouse].[dbo].[DimDate] d_date
+						FROM [10361551].[dbo].[Order Details] d_ord,
+								[10361551].[dbo].[Orders] o,
+								[10361551_DW].[dbo].[DimDate] d_date
 						WHERE d_ord.ORDERID = o.ORDERID AND o.OrderDate = d_date.Date;
 
 -----------------------------------------------------------------------------------
@@ -283,14 +283,14 @@ INSERT INTO [NW_WAREHOUSE].[dbo].[FactSales](ORDER_ID,
 --CUSTOMER DIMENSION --
 
 BEGIN TRY
-	DROP TABLE [NW_Warehouse].[dbo].[Customers]
+	DROP TABLE [10361551_DW].[dbo].[Customers_dim]
 END TRY
 
 BEGIN CATCH
 	/*No Action*/
 END CATCH
 
-CREATE TABLE [NW_Warehouse].[dbo].[Customers](CUSTOMER_ID NCHAR(5) PRIMARY KEY,
+CREATE TABLE [10361551_DW].[dbo].[Customers_dim](CUSTOMER_ID NCHAR(5) PRIMARY KEY,
 												COMPANY_NAME NVARCHAR(40) NOT NULL,
 												CONTACT_NAME NVARCHAR(30) NULL,
 												CONTACT_TITLE NVARCHAR(30) NULL,
@@ -299,7 +299,7 @@ CREATE TABLE [NW_Warehouse].[dbo].[Customers](CUSTOMER_ID NCHAR(5) PRIMARY KEY,
 												REGION NVARCHAR(15) NULL,
 												COUNTRY NVARCHAR(15) NULL);
 
-INSERT INTO [NW_Warehouse].[dbo].[Customers](CUSTOMER_ID,
+INSERT INTO [10361551_DW].[dbo].[Customers_dim](CUSTOMER_ID,
 												COMPANY_NAME,
 												CONTACT_NAME,
 												CONTACT_TITLE,
@@ -315,26 +315,26 @@ INSERT INTO [NW_Warehouse].[dbo].[Customers](CUSTOMER_ID,
 												City,
 												Region,
 												Country
-										FROM [NORTHWND].[dbo].[Customers];
+										FROM [10361551].[dbo].[Customers];
 										
 
 -- PRODUCTS DIMENSION  --
 
 BEGIN TRY
-	DROP TABLE [NW_Warehouse].[dbo].[Products]
+	DROP TABLE [10361551_DW].[dbo].[Products_dim]
 END TRY
 
 BEGIN CATCH
 	/*No Action*/
 END CATCH
 
-CREATE TABLE [NW_Warehouse].[dbo].[Products](PRODUCT_ID INT PRIMARY KEY,
+CREATE TABLE [10361551_DW].[dbo].[Products_dim](PRODUCT_ID INT PRIMARY KEY,
 												PRODUCT_NAME NVARCHAR(40) NOT NULL,
 												UNIT_PRICE MONEY NULL,
 												CATEGORY_NAME NVARCHAR(15) NOT NULL,
 												DISCONTINUED NVARCHAR(3) NOT NULL);
 
-INSERT INTO [NW_Warehouse].[dbo].[Products](PRODUCT_ID,
+INSERT INTO [10361551_DW].[dbo].[Products_dim](PRODUCT_ID,
 											PRODUCT_NAME,
 											UNIT_PRICE,
 											CATEGORY_NAME,
@@ -347,7 +347,7 @@ INSERT INTO [NW_Warehouse].[dbo].[Products](PRODUCT_ID,
 												WHEN (p.Discontinued = 0) THEN 'No'
 												ELSE 'Yes'
 											END)
-									FROM [NORTHWND].[dbo].[Products] p, [NORTHWND].[dbo].[Categories] c
+									FROM [10361551].[dbo].[Products] p, [10361551].[dbo].[Categories] c
 									WHERE P.CategoryID = c.CategoryID;
 									
 
@@ -358,21 +358,21 @@ INSERT INTO [NW_Warehouse].[dbo].[Products](PRODUCT_ID,
 --EMPLOYEE TERRITORY DIMENSION --
 
 BEGIN TRY
-	DROP TABLE [NW_Warehouse].[dbo].[EmployeeTerritories]
+	DROP TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim]
 END TRY
 
 BEGIN CATCH
 	/*No Action*/
 END CATCH
 
-CREATE TABLE [NW_Warehouse].[dbo].[EmployeeTerritories](EMPLOYEE_ID INT NOT NULL,
+CREATE TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID INT NOT NULL,
 														TERRITORY_DESCRIPTION NCHAR(50) NOT NULL,
 														NAME NVARCHAR(40) NOT NULL,
 														TITLE NVARCHAR(30) NULL,
 														REGION_DESCRIPTION NCHAR(50) NOT NULL,
 														REPORTS_TO INT NULL);
 
-INSERT INTO [NW_Warehouse].[dbo].[EmployeeTerritories](EMPLOYEE_ID,
+INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID,
 														TERRITORY_DESCRIPTION,
 														NAME,
 														TITLE,
@@ -384,10 +384,7 @@ INSERT INTO [NW_Warehouse].[dbo].[EmployeeTerritories](EMPLOYEE_ID,
 														e.Title,
 														r.RegionDescription,
 														e.ReportsTo
-												FROM [NORTHWND].[dbo].[Employees] e
-												JOIN [NORTHWND].[dbo].[EmployeeTerritories] et ON e.EmployeeID = et.EmployeeID
-												JOIN [NORTHWND].[dbo].[Territories] t ON t.TerritoryID = et.TerritoryID
-												JOIN [NORTHWND].[dbo].[Region] r ON  t.RegionID = r.RegionID;
-
-
-
+												FROM [10361551].[dbo].[Employees] e
+												JOIN [10361551].[dbo].[EmployeeTerritories] et ON e.EmployeeID = et.EmployeeID
+												JOIN [10361551].[dbo].[Territories] t ON t.TerritoryID = et.TerritoryID
+												JOIN [10361551].[dbo].[Region] r ON  t.RegionID = r.RegionID;
