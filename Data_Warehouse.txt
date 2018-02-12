@@ -365,27 +365,27 @@ BEGIN CATCH
 	/*No Action*/
 END CATCH
 
-CREATE TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID INT NOT NULL,
+CREATE TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim](TERRITORY_ID INT NOT NULL,
 														TERRITORY_DESCRIPTION NCHAR(50) NOT NULL,
-														NAME NVARCHAR(40) NOT NULL,
+														EMPLOYEE_NAME_ID NVARCHAR(40) NOT NULL,
 														TITLE NVARCHAR(30) NULL,
 														REGION_DESCRIPTION NCHAR(50) NOT NULL,
 														REPORTS_TO NVARCHAR(40) NULL);
 
-INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID,
+INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](TERRITORY_ID,
 														TERRITORY_DESCRIPTION,
-														NAME,
+														EMPLOYEE_NAME_ID,
 														TITLE,
 														REGION_DESCRIPTION,
 														REPORTS_TO)
-												SELECT et.EmployeeID,
+												SELECT et.TerritoryID,
 														t.TerritoryDescription,
-														CONCAT(e.FirstName,' ',e.Lastname),
+														CONCAT(e.FirstName, ' ', e.Lastname, ' (', e.EmployeeID, ')'),
 														e.Title,
 														r.RegionDescription,
-														(SELECT CONCAT(FirstName,' ',Lastname) FROM [10361551].[dbo].[Employees] WHERE EmployeeID = e.ReportsTo)
-												FROM [10361551].[dbo].[Employees] e
-												JOIN [10361551].[dbo].[EmployeeTerritories] et ON e.EmployeeID = et.EmployeeID
-												JOIN [10361551].[dbo].[Territories] t ON t.TerritoryID = et.TerritoryID
+														(SELECT CONCAT(FirstName, ' ', Lastname) FROM [10361551].[dbo].[Employees] WHERE EmployeeID = e.ReportsTo)
+												FROM [10361551].[dbo].[Territories] t
+												JOIN [10361551].[dbo].[EmployeeTerritories] et ON t.TerritoryID = et.TerritoryID
+												JOIN [10361551].[dbo].[Employees] e ON e.EmployeeID = et.EmployeeID
 												JOIN [10361551].[dbo].[Region] r ON  t.RegionID = r.RegionID;
 												
