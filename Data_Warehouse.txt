@@ -354,21 +354,6 @@ INSERT INTO [10361551_DW].[dbo].[Products_dim](PRODUCT_ID,
 -----------------------------------------------------------------------------------
 -- EMPLOYEE TERRITORY DIMENSION --
 -----------------------------------------------------------------------------------
-
--- ANALYSIS HAS SHOWN DUPLICATE TERRITORY FOR NEW YORK EXISTS --
-BEGIN TRY
-	DECLARE @TerritoryCount INT;
-	SET @TerritoryCount = (SELECT COUNT(TerritoryDescription) FROM [10361551].[DBO].[Territories] WHERE TerritoryDescription = 'New York');
-
-	IF @TerritoryCount > 1
-	DELETE FROM [10361551].[DBO].[EmployeeTerritories] WHERE TerritoryID IN(SELECT MAX(TerritoryID) from [10361551].[DBO].[Territories] WHERE TerritoryDescription = 'New York')
-	DELETE FROM [10361551].[DBO].[Territories] WHERE TerritoryID IN(SELECT MAX(TerritoryID) from [10361551].[DBO].[Territories] WHERE TerritoryDescription = 'New York')
-END TRY
-
-BEGIN CATCH
-	/*No Action*/
-END CATCH
-
 -- EMPLOYEE TERRITORY DIMENSION --
 BEGIN TRY
 	DROP TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim]
