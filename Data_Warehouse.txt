@@ -380,21 +380,19 @@ END CATCH
 
 
 
-CREATE TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim](TERRITORY_ID INT NOT NULL,
-														TERRITORY_DESCRIPTION NCHAR(50) NOT NULL,
+CREATE TABLE [10361551_DW].[dbo].[EmployeeTerritories_dim](ET_ID INT IDENTITY (1,1) PRIMARY KEY,
+														EMPLOYEE_ID INT NOT NULL,
 														EMPLOYEE_NAME_ID NVARCHAR(40) NOT NULL,
 														TITLE NVARCHAR(30) NULL,
 														REGION_DESCRIPTION NCHAR(50) NOT NULL,
 														REPORTS_TO NVARCHAR(40) NULL);
 
-INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](TERRITORY_ID,
-														TERRITORY_DESCRIPTION,
+INSERT INTO [10361551_DW].[dbo].[EmployeeTerritories_dim](EMPLOYEE_ID,
 														EMPLOYEE_NAME_ID,
 														TITLE,
 														REGION_DESCRIPTION,
 														REPORTS_TO)
-												SELECT et.TerritoryID,
-														t.TerritoryDescription,
+												SELECT DISTINCT(et.EmployeeID),
 														CONCAT(e.FirstName, ' ', e.Lastname, ' (', e.EmployeeID, ')'),
 														e.Title,
 														r.RegionDescription,

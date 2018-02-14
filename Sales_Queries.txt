@@ -1,0 +1,12 @@
+SELECT * FROM [10361551_DW].[dbo].[FactSales];
+
+SELECT DISTINCT(et.Employee_Name_ID), s.Gross_Sale_Value FROM [10361551_DW].[dbo].[EmployeeTerritories_dim] et, [10361551_DW].[dbo].[FactSales] s WHERE et.EMPLOYEE_ID = s.EMPLOYEE_ID AND et.Employee_Name_ID = 'Andrew Fuller (2)';
+SELECT DISTINCT(et.Employee_Name_ID), SUM(s.Gross_Sale_Value) FROM [10361551_DW].[dbo].[EmployeeTerritories_dim] et, [10361551_DW].[dbo].[FactSales] s WHERE et.EMPLOYEE_ID = s.EMPLOYEE_ID GROUP BY et.Employee_Name_ID;
+
+SELECT et.TERRITORY_DESCRIPTION, SUM(s.Gross_Sale_Value) FROM [10361551_DW].[dbo].[EmployeeTerritories_dim] et, [10361551_DW].[dbo].[FactSales] s WHERE et.EMPLOYEE_ID = s.EMPLOYEE_ID GROUP BY et.TERRITORY_DESCRIPTION;
+SELECT et.REGION_DESCRIPTION, SUM(s.Gross_Sale_Value) FROM [10361551_DW].[dbo].[EmployeeTerritories_dim] et, [10361551_DW].[dbo].[FactSales] s WHERE et.EMPLOYEE_ID = s.EMPLOYEE_ID GROUP BY et.REGION_DESCRIPTION;
+SELECT d.Quarter, SUM(s.Gross_Sale_Value) FROM [10361551_DW].[dbo].[EmployeeTerritories_dim] et, [10361551_DW].[dbo].[FactSales] s, [10361551_DW].[dbo].[DimDate] d 
+WHERE et.EMPLOYEE_ID = s.EMPLOYEE_ID AND s.DATE_KEY = d.DATE_KEY AND d.Year = 1996 GROUP BY d.Quarter;
+
+SELECT et.REGION_DESCRIPTION, d.Quarter, SUM(s.Gross_Sale_Value) FROM [10361551_DW].[dbo].[EmployeeTerritories_dim] et, [10361551_DW].[dbo].[FactSales] s, [10361551_DW].[dbo].[DimDate] d 
+WHERE et.EMPLOYEE_ID = s.EMPLOYEE_ID AND s.DATE_KEY = d.DATE_KEY AND d.Year = 1997 and et.Region_Description = 'Eastern' GROUP BY d.Quarter, et.REGION_DESCRIPTION ORDER BY et.REGION_DESCRIPTION, d.Quarter;
